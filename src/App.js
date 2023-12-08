@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import { GiphyFetch } from "@giphy/js-fetch-api";
+import { useState } from "react";
+import GifList from "./components/GifList";
+
+const giphy = new GiphyFetch(process.env.REACT_APP_GIPHY_KEY);
 
 function App() {
+  const [text, setText] = useState("");
+  const [results, setResults] = useState("");
+
+  const handleChange = (e) => {
+    setText(e.target.value);
+
+    const apiCall = async () => {
+      const res = await giphy.search(e.target.value, { limit: 20 });
+      console.log(res);
+      setResults(res.data);
+    };
+
+    apiCall();
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Gif Generator</h1>
+      <h3>Type text into the form</h3>
+      <input className="input-field" value={text} onChange={handleChange} />
+      {results && <GifList gifs={results} />}
     </div>
   );
 }
